@@ -44,52 +44,52 @@ const TRAPPED_OEIS={
 
 const MODES={
   '2k':{label:'2 Knights',g:'Multiple Knights',rps:false,
-    desc:'Red & black knights alternate, each placed on the lowest spiral number not attacked by the other. The classic Numberphile setup.',
+    desc:'Two knight armies, greedy spiral placement — each avoids squares the other attacks.',
     teams:[{name:'Red knight',color:'#E24B4A',piece:'knight',avoids:[1]},{name:'Black knight',color:'#2C2C2A',piece:'knight',avoids:[0]}]},
   '3k':{label:'3 Knights',g:'Multiple Knights',rps:false,
-    desc:'Three knights alternate. Each avoids squares attacked by either of the other two.',
+    desc:'Three knight armies, each avoiding all others.',
     teams:[{name:'Red',color:'#E24B4A',piece:'knight',avoids:[1,2]},{name:'Blue',color:'#378ADD',piece:'knight',avoids:[0,2]},{name:'Green',color:'#639922',piece:'knight',avoids:[0,1]}]},
   '4k':{label:'4 Knights',g:'Multiple Knights',rps:false,
-    desc:'Four knight colours, each avoiding all three others.',
+    desc:'Four knight armies, each avoiding all others.',
     teams:[{name:'Red',color:'#E24B4A',piece:'knight',avoids:[1,2,3]},{name:'Blue',color:'#378ADD',piece:'knight',avoids:[0,2,3]},{name:'Green',color:'#639922',piece:'knight',avoids:[0,1,3]},{name:'Purple',color:'#7F77DD',piece:'knight',avoids:[0,1,2]}]},
   '5k':{label:'5 Knights',g:'Multiple Knights',rps:false,
-    desc:'Five knight colours, each avoiding all four others.',
+    desc:'Five knight armies, each avoiding all others.',
     teams:[{name:'Red',color:'#E24B4A',piece:'knight',avoids:[1,2,3,4]},{name:'Blue',color:'#378ADD',piece:'knight',avoids:[0,2,3,4]},{name:'Green',color:'#639922',piece:'knight',avoids:[0,1,3,4]},{name:'Purple',color:'#7F77DD',piece:'knight',avoids:[0,1,2,4]},{name:'Orange',color:'#EF9F27',piece:'knight',avoids:[0,1,2,3]}]},
   'alfil_leaper':{label:'Alfil + Leaper',g:'Mixed Pieces',rps:false,
-    desc:'Black alfil (±2 diagonal) vs orange leaper (±3 orthogonal).',
+    desc:'Alfil (±2 diagonal) vs Leaper (±3 orthogonal).',
     teams:[{name:'Black alfil',color:'#2C2C2A',piece:'alfil',avoids:[1]},{name:'Orange leaper',color:'#EF9F27',piece:'leaper',avoids:[0]}]},
   'kn_ant':{label:'Knight + Antelope',g:'Mixed Pieces',rps:false,
-    desc:'Black knight vs cyan antelope (4-3 leaper). "Like star destroyers."',
+    desc:'Knight (2+1 jump) vs Antelope (4+3 jump).',
     teams:[{name:'Black knight',color:'#2C2C2A',piece:'knight',avoids:[1]},{name:'Cyan antelope',color:'#1D9E75',piece:'antelope',avoids:[0]}]},
   'kn_zeb':{label:'Knight + Zebra',g:'Mixed Pieces',rps:false,
-    desc:'Black knight vs red zebra (2-3 leaper). "Mandelbrot-level coolness."',
+    desc:'Knight (2+1 jump) vs Zebra (3+2 jump).',
     teams:[{name:'Black knight',color:'#2C2C2A',piece:'knight',avoids:[1]},{name:'Red zebra',color:'#E24B4A',piece:'zebra',avoids:[0]}]},
   'kn_dab_waz':{label:'Knight+Dabbaba+Wazir×2',g:'Mixed Pieces',rps:false,
-    desc:'Four-piece: knight, dabbaba, and two wazirs — each avoids all others.',
+    desc:'Four pieces: Knight · Dabbaba · two Wazirs, all avoiding each other.',
     teams:[{name:'Black knight',color:'#2C2C2A',piece:'knight',avoids:[1,2,3]},{name:'Red dabbaba',color:'#E24B4A',piece:'dabbaba',avoids:[0,2,3]},{name:'Cyan wazir',color:'#1D9E75',piece:'wazir',avoids:[0,1,3]},{name:'Purple wazir',color:'#7F77DD',piece:'wazir',avoids:[0,1,2]}]},
   'waz_ferz':{label:'Wazir+Ferz ×2 each',g:'Mixed Pieces',rps:false,
-    desc:'Two wazirs vs two ferzes. "How is this happening?"',
+    desc:'Two Wazirs vs two Ferzes — orthogonal vs diagonal steps.',
     teams:[{name:'Black wazir',color:'#2C2C2A',piece:'wazir',avoids:[1,2,3]},{name:'Red ferz',color:'#E24B4A',piece:'ferz',avoids:[0,2,3]},{name:'Cyan wazir',color:'#1D9E75',piece:'wazir',avoids:[0,1,3]},{name:'Purple ferz',color:'#7F77DD',piece:'ferz',avoids:[0,1,2]}]},
   'rps_kn':{label:'RPS: Knights',g:'Rock-Paper-Scissors',rps:true,
-    desc:'Rock-Paper-Scissors knights. Each team only avoids the one team that beats it — NOT all opponents.',
+    desc:'Three knight teams in a cyclic dominance cycle — each avoids only the one team that beats it.',
     teams:[{name:'Rock',color:'#888780',piece:'knight',avoids:[1]},{name:'Paper',color:'#E24B4A',piece:'knight',avoids:[2]},{name:'Scissors',color:'#378ADD',piece:'knight',avoids:[0]}]},
   'rps_mix':{label:'RPS: Knight/Zebra/Antelope',g:'Rock-Paper-Scissors',rps:true,
-    desc:'RPS with different piece types: Rock=knight, Paper=zebra, Scissors=antelope.',
+    desc:'RPS cycle with three different piece types: Knight · Zebra · Antelope.',
     teams:[{name:'Rock: knight',color:'#888780',piece:'knight',avoids:[1]},{name:'Paper: zebra',color:'#E24B4A',piece:'zebra',avoids:[2]},{name:'Scissors: antelope',color:'#378ADD',piece:'antelope',avoids:[0]}]},
   'rps_wkf':{label:'RPS: Wazir/Knight/Ferz',g:'Rock-Paper-Scissors',rps:true,
-    desc:'RPS with very different ranges: Rock=wazir, Paper=knight, Scissors=ferz.',
+    desc:'RPS cycle with very different ranges: Wazir · Knight · Ferz.',
     teams:[{name:'Rock: wazir',color:'#888780',piece:'wazir',avoids:[1]},{name:'Paper: knight',color:'#E24B4A',piece:'knight',avoids:[2]},{name:'Scissors: ferz',color:'#378ADD',piece:'ferz',avoids:[0]}]},
   // ── Trapped Knight modes ──
   'tk_knight':{label:'Trapped Knight ♞',g:'Trapped',trapped:true,piece:'knight',
-    desc:'A single knight starts at spiral square 1 and always moves to the lowest-numbered unvisited square it can reach. On the infinite Ulam spiral it gets trapped after exactly 2016 moves (OEIS A316667). The trail below shows early moves in blue → late moves in red.'},
+    desc:'One knight moves greedily to the lowest unvisited square until trapped. 2,016 moves (OEIS A316667).'},
   'tk_zebra':{label:'Trapped Zebra ◆',g:'Trapped',trapped:true,piece:'zebra',
-    desc:'A zebra (3+2 L-jump) follows the same greedy rule: always move to the lowest-numbered unvisited reachable square. Wider leaps mean a different trapping geometry — click Generate to discover how many moves it survives.'},
+    desc:'One zebra (3+2 L-jump) follows the same greedy rule until trapped.'},
   'tk_antelope':{label:'Trapped Antelope ◈',g:'Trapped',trapped:true,piece:'antelope',
-    desc:'An antelope (4+3 L-jump) follows the greedy lowest-unvisited rule. Its long range creates an unusually sparse trail before eventually closing in on itself.'},
+    desc:'One antelope (4+3 L-jump) follows the same greedy rule until trapped.'},
   'cm':{label:'Custom — Mixed pieces',g:'Custom',rps:false,custom:true,
-    desc:'Design your own: pick up to 10 teams each with any piece. All teams avoid all others.'},
+    desc:'Build your own: up to 10 teams, any piece, all avoid each other.'},
   'cr':{label:'Custom — RPS cycle',g:'Custom',rps:true,custom:true,
-    desc:'Design your own RPS cycle: 3–10 teams. Each team only avoids the next in the cycle.'},
+    desc:'Build your own RPS cycle: 3–10 teams, cyclic avoidance.'},
 };
 const MODE_GROUPS=[
   {label:'Trapped',         keys:['tk_knight','tk_zebra','tk_antelope']},
@@ -512,7 +512,7 @@ function showEli(level){
   const el=document.getElementById('eliContent');
   if(level==8){
     buildEli8Data(); eli8Step=0;
-    el.innerHTML=`<p>Picture a giant chessboard where every square has a number. The numbers start at 1 in the very middle and wind outward like a snail's shell: 2, 3, 4… all the way to the edge.<br><br>This app shows two cool things you can do with that board.</p><p><strong>Thing 1 — Two armies:</strong> A <strong>Red knight</strong> and a <strong>Black knight</strong> take turns. Each picks the square with the <strong>smallest number</strong> that the other knight <strong>can't jump to</strong>. That's the whole rule. Do it thousands of times and something magical happens: the board splits into big red patches and big black patches, even though neither knight was trying to build patches. <em>Step through below to watch it start!</em></p><p><strong>Thing 2 — One trapped knight:</strong> One single knight starts on square 1 and every turn jumps to the <strong>nearest unvisited square</strong> it can reach. It leaves a trail of visited squares behind. Eventually every square nearby is already in the trail — the knight is stuck and can't go anywhere. A normal chess knight gets stuck after exactly <strong>2,016 jumps</strong>. That's why it's called the Trapped Knight!</p>
+    el.innerHTML=`<p>Imagine a huge chessboard where every square has a number. The numbers start at 1 right in the middle and wind outward like a snail's shell — 2, 3, 4 — all the way to the edges.</p><p><strong>Red</strong> and <strong>Black</strong> take turns placing a knight. Each picks the square with the <strong>smallest number</strong> the other knight <strong>can't jump to</strong>. That's the only rule. Do it millions of times and the board mysteriously splits into big red and black territories — even though neither side was trying to make territories. Step through below to see how it starts!</p><p style="font-size:11px;color:#888780;margin-top:8px">This app also has a <strong>Trapped Knight</strong> mode: one lone knight hops to the nearest unvisited square each turn until it's completely boxed in by its own trail. Select it from the Mode menu to try it.</p>
 <div class="eli8-card">
   <div class="eli8-board-col">
     <div id="eli8Brd"></div>

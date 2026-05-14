@@ -7,7 +7,7 @@ h1{font-size:18px;font-weight:500;margin-bottom:8px}
 .links a{color:#378ADD;text-decoration:none}.links a:hover{text-decoration:underline}
 
 /* ── Controls ── */
-.controls{display:flex;flex-wrap:nowrap;gap:10px;align-items:flex-end;margin-bottom:14px;width:100%}
+.controls{display:flex;flex-wrap:nowrap;gap:10px;align-items:flex-end;margin-bottom:10px;width:100%}
 .ctrl{display:flex;flex-direction:column;gap:4px}
 .cl{font-size:11px;color:#888780;text-transform:uppercase;letter-spacing:.05em}
 .ctrl-row{display:flex;gap:6px;align-items:center}
@@ -21,8 +21,8 @@ select{height:34px;border-radius:6px;border:1px solid #d3d1c7;background:#fff;
   cursor:pointer;font-size:14px;color:#888780;display:flex;align-items:center;
   justify-content:center;flex-shrink:0;transition:background .1s;line-height:1}
 .info-btn:hover{background:#eceae4;color:#2c2c2a}
-#runBtn{height:34px;padding:0 22px;border-radius:6px;border:none;
-  background:#2c2c2a;color:#fff;font-size:13px;font-weight:500;cursor:pointer}
+#runBtn{display:block;width:100%;height:38px;border-radius:6px;border:none;
+  background:#2c2c2a;color:#fff;font-size:13px;font-weight:500;cursor:pointer;margin-bottom:14px}
 #runBtn:hover:not(:disabled){background:#444}
 #runBtn:disabled{opacity:.4;cursor:default}
 
@@ -165,26 +165,23 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;
 
 /* ── Responsive ── */
 
-/* Tablet portrait and below: let controls wrap to two rows */
+/* Tablet portrait / phone landscape: controls may wrap */
 @media (max-width:680px){
   #app{padding:16px}
   .controls{flex-wrap:wrap}
-  #modeSelect{min-width:0;width:100%}
-  .ctrl:has(#modeSelect){width:100%}
+  #modeSelect{min-width:0}
+  .ctrl:has(#modeSelect){flex:1 1 100%}
   .ctrl-row{width:100%}
   #sizeSelect,#shapeSelect{min-width:0;flex:1}
-  .ctrl:last-child{margin-left:0;width:100%}
-  #runBtn{width:100%}
 }
 
-/* Phone portrait: stack every control vertically */
+/* Phone portrait: stack each control as label-above-select */
 @media (max-width:480px){
   #app{padding:12px}
-  .controls{flex-direction:column;align-items:stretch;gap:8px}
-  .ctrl{flex-direction:row;align-items:center;justify-content:space-between;gap:8px}
-  .ctrl .cl{min-width:54px;flex-shrink:0}
-  .ctrl select{flex:1;min-width:0;height:38px}
-  .ctrl-row{flex:1;min-width:0}
+  .controls{flex-direction:column;gap:6px;margin-bottom:8px}
+  .ctrl{flex-direction:column;gap:3px;width:100%}
+  .ctrl select{width:100%;min-width:0;height:38px}
+  .ctrl-row{width:100%}
   .ctrl-row select{flex:1;min-width:0}
   #runBtn{height:42px;font-size:14px}
   .eli8-card{flex-direction:column}
