@@ -92,10 +92,10 @@ const MODES={
     desc:'Design your own RPS cycle: 3–10 teams. Each team only avoids the next in the cycle.'},
 };
 const MODE_GROUPS=[
+  {label:'Trapped',         keys:['tk_knight','tk_zebra','tk_antelope']},
   {label:'Multiple Knights',keys:['2k','3k','4k','5k']},
   {label:'Mixed Pieces',    keys:['alfil_leaper','kn_ant','kn_zeb','kn_dab_waz','waz_ferz']},
   {label:'Rock-Paper-Scissors',keys:['rps_kn','rps_mix','rps_wkf']},
-  {label:'Trapped',         keys:['tk_knight','tk_zebra','tk_antelope']},
   {label:'Custom',          keys:['cm','cr']},
 ];
 const SIZE_GROUPS=[
@@ -132,6 +132,7 @@ const ELI_TEXT={
     }
     msel.appendChild(og);
   }
+  msel.value='2k';
   const ssel=document.getElementById('sizeSelect');
   for(const sg of SIZE_GROUPS){
     const og=document.createElement('optgroup'); og.label=sg.label;
@@ -252,10 +253,11 @@ function simulateTrapped(piece){
 // ═══════════════════════════════════════════════════════════════
 const canvas=document.getElementById('canvas');
 const ctx=canvas.getContext('2d');
+function canvasSz(){const a=document.getElementById('app'),s=getComputedStyle(a);return Math.min(600,a.clientWidth-parseFloat(s.paddingLeft)-parseFloat(s.paddingRight));}
 function hexToRGB(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
 function luma(h){const[r,g,b]=hexToRGB(h);return 0.299*r+0.587*g+0.114*b;}
 function render(n,cg,snum,teams,shape){
-  const sz=Math.min(600,document.getElementById('app').clientWidth-48);
+  const sz=canvasSz();
   canvas.width=sz; canvas.height=sz; canvas.style.width=sz+'px'; canvas.style.height=sz+'px';
   const colors=['#f0efea',...teams.map(t=>t.color)];
   const cellPx=sz/n;
@@ -287,7 +289,7 @@ function render(n,cg,snum,teams,shape){
 // ═══════════════════════════════════════════════════════════════
 function renderTrapped(pathData,shape){
   const{path,N}=pathData;
-  const sz=Math.min(600,document.getElementById('app').clientWidth-48);
+  const sz=canvasSz();
   canvas.width=sz; canvas.height=sz; canvas.style.width=sz+'px'; canvas.style.height=sz+'px';
 
   // Bounding box of all path cells + padding
@@ -510,7 +512,7 @@ function showEli(level){
   const el=document.getElementById('eliContent');
   if(level==8){
     buildEli8Data(); eli8Step=0;
-    el.innerHTML=`<p>The board is numbered like a snail shell starting from the middle. There are two different games here. In <strong>competitive placement</strong> (shown below), two knight armies take turns picking the <strong>lowest-numbered safe square</strong> — one the enemy can't jump to. In the <strong>Trapped Knight</strong> mode, just one knight hops around visiting new squares in number order until it gets surrounded by its own footprints and can't go anywhere. Step through the first game to see how it works!</p>
+    el.innerHTML=`<p>Picture a giant chessboard. The squares have numbers: 1 sits right in the middle, then 2, 3, 4… wind outward like a snail's shell.<br><br>A <strong>Red knight</strong> and a <strong>Black knight</strong> take turns. On each turn, a knight picks the square with the <strong>smallest number</strong> that the other knight <strong>can't jump to</strong>. That's the whole rule!<br><br>Do this thousands of times and something weird happens — the board splits into big red patches and big black patches, even though neither knight was trying to make patches. Step through below to see how it begins!</p>
 <div class="eli8-card">
   <div class="eli8-board-col">
     <div id="eli8Brd"></div>

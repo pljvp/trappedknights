@@ -163,6 +163,34 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;
 .modal-note{font-size:12px;color:#5f5e5a;line-height:1.6;background:#fffbf0;
   border:1px solid #eed;border-radius:6px;padding:10px}
 
+/* ── Responsive ── */
+
+/* Tablet portrait and below: let controls wrap to two rows */
+@media (max-width:680px){
+  #app{padding:16px}
+  .controls{flex-wrap:wrap}
+  #modeSelect{min-width:0;width:100%}
+  .ctrl:has(#modeSelect){width:100%}
+  .ctrl-row{width:100%}
+  #sizeSelect,#shapeSelect{min-width:0;flex:1}
+  .ctrl:last-child{margin-left:0;width:100%}
+  #runBtn{width:100%}
+}
+
+/* Phone portrait: stack every control vertically */
+@media (max-width:480px){
+  #app{padding:12px}
+  .controls{flex-direction:column;align-items:stretch;gap:8px}
+  .ctrl{flex-direction:row;align-items:center;justify-content:space-between;gap:8px}
+  .ctrl .cl{min-width:54px;flex-shrink:0}
+  .ctrl select{flex:1;min-width:0;height:38px}
+  .ctrl-row{flex:1;min-width:0}
+  .ctrl-row select{flex:1;min-width:0}
+  #runBtn{height:42px;font-size:14px}
+  .eli8-card{flex-direction:column}
+  .modal-2col{grid-template-columns:1fr}
+}
+
 /* ── Tooltip ── */
 #tip{position:fixed;background:#fff;border:1px solid #d3d1c7;border-radius:8px;
   padding:9px 11px;box-shadow:0 4px 14px rgba(0,0,0,.12);
