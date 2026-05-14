@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trapped Knights</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+<h1>Trapped Knights</h1>
+<p id="desc"></p>
+<p class="links">
+  <strong>Videos:</strong>
+  <a href="https://www.youtube.com/watch?v=RGQe8waGJ4w" target="_blank">The Trapped Knight — Numberphile</a>&nbsp;·&nbsp;
+  <a href="https://www.youtube.com/watch?v=UiX4CFIiegM" target="_blank">Red &amp; Black Knights — Numberphile</a>&nbsp;·&nbsp;
+  <a href="https://www.youtube.com/watch?v=VgmDuBCayPw" target="_blank">Amazing Chessboard Patterns (extra)</a><br>
+  <strong>Inspired by:</strong>
+  <a href="https://oeis.org/~njas/" target="_blank">Neil Sloane</a> (OEIS founder,
+  <a href="https://en.wikipedia.org/wiki/Neil_Sloane" target="_blank">Wikipedia</a>) &amp; Jonas Karlsson ·
+  <a href="https://oeis.org/A316667" target="_blank">OEIS A316667</a>
+</p>
+
+<!-- Two-setup explainer -->
+<div style="font-size:12px;color:#5f5e5a;background:#fff;border:1px solid #e0ddd7;border-radius:7px;padding:9px 13px;margin-bottom:16px;line-height:1.7">
+  <strong style="color:#2c2c2a">Two different problems live here.</strong><br>
+  <strong>Competitive placement</strong> (Multiple Knights, Mixed Pieces, RPS): armies take turns placing pieces on the lowest spiral square not attacked by the enemy. No piece is ever stuck — teams can always find a square further out. The mystery is the large-scale pattern that emerges.<br>
+  <strong>Trapped Knight/Zebra/Antelope</strong>: a <em>single</em> piece moves each turn to the lowest-numbered unvisited square it can reach, until every reachable square has been visited and it cannot move. One piece, one trail, finite sequence.
+</div>
+
+<!-- Understand the phenomenon — expanded by default -->
+<div class="lib-section">
+  <div class="lib-toggle" id="understandToggle">
+    <span class="lib-toggle-title">Understand the phenomenon</span>
+    <span class="lib-toggle-sub">Step-by-step explanations at four levels of depth</span>
+    <span class="lib-arrow open" id="understandArrow">▾</span>
+  </div>
+  <div id="understandContent" class="open">
+    <div class="eli-hdr">
+      <span class="eli-lbl">Explain it like I'm:</span>
+      <select id="eliSelect">
+        <option value="8">8 years old</option>
+        <option value="16">16 years old</option>
+        <option value="32">32 years old</option>
+        <option value="64">64 years old</option>
+      </select>
+    </div>
+    <div id="eliContent"></div>
+  </div>
+</div>
+
+<!-- Piece library — collapsed by default -->
+<div class="lib-section">
+  <div class="lib-toggle" id="libToggle">
+    <span class="lib-toggle-title">Piece Library</span>
+    <span class="lib-toggle-sub">Each piece type explained</span>
+    <span class="lib-arrow" id="libArrow">▾</span>
+  </div>
+  <div id="libContent">
+    <div class="lib-used-note" id="libUsedNote"></div>
+    <div class="pcatalog" id="pieceCatalog"></div>
+    <div class="mkey">
+      <span><span class="kd" style="background:#2c2c2a"></span>Piece position</span>
+      <span><span class="kd" style="background:#5a9e4a"></span>Attacked squares</span>
+      <span><span class="kd" style="background:#f0efea;border:1px solid #ccc"></span>Empty</span>
+      <span><span class="kd" style="background:#fff;border:2px solid #95c45e"></span>Used in selected mode</span>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="ctrl">
+    <span class="cl">Mode</span>
+    <div class="ctrl-row">
+      <select id="modeSelect"></select>
+      <button class="info-btn" id="rpsInfoBtn" title="What is RPS mode?">ℹ</button>
+    </div>
+  </div>
+  <div class="ctrl"><span class="cl">Board size</span><select id="sizeSelect"></select></div>
+  <div class="ctrl"><span class="cl">Shape</span>
+    <select id="shapeSelect">
+      <option value="circle">● Circles (80%)</option>
+      <option value="square">■ Squares</option>
+    </select>
+  </div>
+  <div class="ctrl" style="margin-left:auto"><button id="runBtn">Generate</button></div>
+</div>
+
+<!-- Custom panel -->
+<div id="customPanel">
+  <div class="cpt" id="cpTitle">Custom pieces</div>
+  <div class="cp-row1">
+    <span class="cl" style="font-size:12px;text-transform:none;letter-spacing:0">Teams:</span>
+    <select id="cpCountSel" style="height:30px;width:110px;font-size:12px"></select>
+  </div>
+  <div class="cp-teams" id="cpTeams"></div>
+  <div id="cpPreview">
+    <div id="cpDiag"></div>
+    <div id="cpPrevInfo">
+      <div class="cpPrevLabel" id="cpPrevLabel">Select a team</div>
+      <div class="cpPrevName" id="cpPrevName"></div>
+      <div class="cpPrevDesc" id="cpPrevDesc"></div>
+    </div>
+  </div>
+  <div id="cpRpsNote"></div>
+</div>
+
+<!-- Trapped Knight result box -->
+<div id="trappedResult"></div>
+
+<canvas id="canvas"></canvas>
+<div class="tleg" id="tleg"></div>
+<div id="rpsNote"></div>
+<p id="info"></p>
+
+</div><!-- #app -->
+
+<!-- RPS Modal -->
+<div id="rpsModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div class="modal-title">Standard mode vs Rock-Paper-Scissors mode</div>
+      <button class="modal-close" id="rpsModalClose">✕</button>
+    </div>
+    <div class="modal-2col">
+      <div class="modal-box-l">
+        <div class="modal-box-title">Standard mode</div>
+        <div style="font-size:12px;color:#5f5e5a;line-height:1.6">Each team avoids squares attacked by <strong>any</strong> opponent. With 3 teams, everyone avoids everyone else — mutual hostility. Like three armies all simultaneously at war.</div>
+      </div>
+      <div class="modal-box-r">
+        <div class="modal-box-title">RPS mode</div>
+        <div style="font-size:12px;color:#5f5e5a;line-height:1.6">Each team only avoids the <strong>one</strong> team that beats it. Rock can safely sit where Scissors could attack — only Paper is the threat. Creates a cyclic dominance hierarchy.</div>
+      </div>
+    </div>
+    <div class="modal-cycle">
+      <div class="modal-cycle-lbl">The RPS avoidance cycle</div>
+      <div class="modal-cycle-row">
+        <span style="color:#E24B4A;font-weight:600">Rock</span>
+        <span style="color:#aaa;font-size:12px"> ← loses to </span>
+        <span style="color:#378ADD;font-weight:600">Paper</span>
+        <span style="color:#aaa;font-size:12px"> ← loses to </span>
+        <span style="color:#639922;font-weight:600">Scissors</span>
+        <span style="color:#aaa;font-size:12px"> ← loses to </span>
+        <span style="color:#E24B4A;font-weight:600">Rock</span>
+      </div>
+      <div style="font-size:11px;color:#888780;margin-top:6px">Rock avoids Paper · Paper avoids Scissors · Scissors avoids Rock</div>
+    </div>
+    <div class="modal-note">
+      <strong>Key difference:</strong> In standard 3-team mode, each team avoids 2 opponents (higher constraint). In RPS, each team avoids only 1 (lower constraint, more freedom). This asymmetry creates spiral-like territorial patterns instead of the symmetric quadrant structure. Works with any number of teams ≥ 3 in a cycle.
+    </div>
+  </div>
+</div>
+
+<div id="tip"><div id="tn"></div><div id="td"></div><div id="tg"></div></div>
+
+<script src="app.js"></script>
+</body>
+</html>
