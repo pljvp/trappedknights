@@ -373,6 +373,70 @@ function buildDiagram(piece){
 // ELI-8 VISUALIZER
 // ═══════════════════════════════════════════════════════════════
 let eli8Data=null, eli8Step=0;
+
+// ── ELI-8 Trapped Knight mini-visualiser ──────────────────────
+let eli8TkData=null, eli8TkStep=0;
+function buildEli8TkData(){
+  if(eli8TkData) return;
+  const MAX=12;
+  const {path,N,snumFull}=simulateTrapped('knight');
+  const {row:sr,col:sc}=path[0];
+  const VIEW=4; // ±4 → 9×9 window
+  const steps=[];
+  for(let s=0;s<=MAX;s++){
+    const cur=path[s];
+    const vis=new Set(path.slice(0,s+1).map(p=>p.idx));
+    const reach=[];
+    for(const[dr,dc]of MOVES.knight){
+      const nr=cur.row+dr,nc=cur.col+dc;
+      if(nr>=0&&nr<N&&nc>=0&&nc<N){const ni=nr*N+nc;if(!vis.has(ni))reach.push({idx:ni,snum:snumFull[ni]});}
+    }
+    reach.sort((a,b)=>a.snum-b.snum);
+    const nxt=s<path.length-1?path[s+1]:null;
+    let desc;
+    if(s===0)
+      desc=`The knight starts at square <strong>1</strong> — the centre of the spiral. It can jump to <strong>${reach.length}</strong> unvisited squares. The lowest is <strong>${nxt?nxt.spiralNum:'—'}</strong>, so it goes there.`;
+    else if(s===MAX)
+      desc=`Step ${s}: at square <strong>${cur.spiralNum}</strong>. The trail now has ${s} visited squares boxing it in. This continues — after <strong>2,016</strong> total jumps every reachable square has been visited and the knight cannot move. <em>Select Trapped Knight ♞ from the Mode menu to see the full path!</em>`;
+    else
+      desc=`Step ${s}: jumped to <strong>${cur.spiralNum}</strong>. Trail: ${s} squares visited. Still ${reach.length} options available — lowest unvisited reachable is <strong>${nxt?nxt.spiralNum:'—'}</strong>.`;
+    steps.push({cur,vis,reach,nxtIdx:nxt?nxt.idx:-1,desc});
+  }
+  eli8TkData={steps,snumFull,sr,sc,VIEW,N};
+}
+function renderEli8TkBoard(cont,si){
+  const{steps,snumFull,sr,sc,VIEW,N}=eli8TkData;
+  const st=steps[si],CELL=26,G=2*VIEW+1;
+  const g=document.createElement('div');
+  g.style.cssText=`display:inline-grid;grid-template-columns:repeat(${G},${CELL}px);gap:1.5px;background:#c8c6c0;border:1.5px solid #c8c6c0;border-radius:4px;padding:1.5px`;
+  const vis=st.vis,reach=new Set(st.reach.map(r=>r.idx)),cur=st.cur.idx,nxt=st.nxtIdx;
+  for(let dr=-VIEW;dr<=VIEW;dr++) for(let dc=-VIEW;dc<=VIEW;dc++){
+    const r=sr+dr,c=sc+dc,cell=document.createElement('div');
+    if(r<0||r>=N||c<0||c>=N){
+      cell.style.cssText=`width:${CELL}px;height:${CELL}px;background:#eceae4;border-radius:2px`;
+      g.appendChild(cell);continue;
+    }
+    const idx=r*N+c,snum=snumFull[idx];
+    let bg,tc,ex='';
+    if(idx===cur)            {bg='#43A047';tc='#fff';}
+    else if(vis.has(idx))    {bg='#3d3b38';tc='rgba(255,255,255,0.4)';}
+    else if(idx===nxt)       {bg='#fff8d0';tc='#5a4e00';ex='outline:2px solid #E8A000;outline-offset:-2px;';}
+    else if(reach.has(idx))  {bg='#f8f6e0';tc='#7a7240';}
+    else                     {bg='#f8f7f4';tc='#c8c6c0';}
+    cell.style.cssText=`width:${CELL}px;height:${CELL}px;background:${bg};color:${tc};display:flex;align-items:center;justify-content:center;font-size:${snum>99?'7.5px':'9px'};border-radius:2px;${ex}`;
+    cell.textContent=String(snum);
+    g.appendChild(cell);
+  }
+  cont.innerHTML='';cont.appendChild(g);
+}
+function updateEli8Tk(){
+  const{steps}=eli8TkData,st=steps[eli8TkStep];
+  renderEli8TkBoard(document.getElementById('eli8TkBrd'),eli8TkStep);
+  document.getElementById('eli8TkDesc').innerHTML=st.desc;
+  document.getElementById('eli8TkNum').textContent=`Step ${eli8TkStep} of ${steps.length-1}`;
+  document.getElementById('eli8TkPrv').disabled=eli8TkStep===0;
+  document.getElementById('eli8TkNxt').disabled=eli8TkStep===steps.length-1;
+}
 function buildEli8Data(){
   if(eli8Data) return;
   const N=7, teams=MODES['2k'].teams;
@@ -511,8 +575,33 @@ function showEli(level){
   document.getElementById('eliSelect').value=level;
   const el=document.getElementById('eliContent');
   if(level==8){
-    buildEli8Data(); eli8Step=0;
-    el.innerHTML=`<p>Imagine a huge chessboard where every square has a number. The numbers start at 1 right in the middle and wind outward like a snail's shell — 2, 3, 4 — all the way to the edges.</p><p><strong>Red</strong> and <strong>Black</strong> take turns placing a knight. Each picks the square with the <strong>smallest number</strong> the other knight <strong>can't jump to</strong>. That's the only rule. Do it millions of times and the board mysteriously splits into big red and black territories — even though neither side was trying to make territories. Step through below to see how it starts!</p><p style="font-size:11px;color:#888780;margin-top:8px">This app also has a <strong>Trapped Knight</strong> mode: one lone knight hops to the nearest unvisited square each turn until it's completely boxed in by its own trail. Select it from the Mode menu to try it.</p>
+    buildEli8TkData(); eli8TkStep=0;
+    buildEli8Data();   eli8Step=0;
+    el.innerHTML=`
+<p style="margin-bottom:12px">One knight on a spiral-numbered board. Rule: always jump to the <strong>lowest-numbered square you haven't visited yet</strong>. Step through to see the trail grow — after 2,016 jumps every nearby square is visited and the knight is trapped.</p>
+<div class="eli8-card">
+  <div class="eli8-board-col">
+    <div id="eli8TkBrd"></div>
+    <div class="eli8-nav">
+      <button id="eli8TkPrv">◀ Prev</button>
+      <span class="eli8-step" id="eli8TkNum"></span>
+      <button id="eli8TkNxt">Next ▶</button>
+    </div>
+  </div>
+  <div class="eli8-info-col">
+    <div class="eli8-stephead">The Trapped Knight</div>
+    <div class="eli8-desc" id="eli8TkDesc"></div>
+    <div class="eli8-legend" style="margin-top:10px;flex-direction:column;gap:5px">
+      <span class="eli8-key"><span class="eli8-dot" style="background:#43A047"></span>Knight here</span>
+      <span class="eli8-key"><span class="eli8-dot" style="background:#3d3b38"></span>Visited (trail)</span>
+      <span class="eli8-key"><span class="eli8-dot" style="background:#f8f6e0;border:1px solid #ccc"></span>Reachable &amp; unvisited</span>
+      <span class="eli8-key"><span class="eli8-dot" style="background:#fff8d0;outline:2px solid #E8A000;outline-offset:-2px"></span>Next jump (lowest #)</span>
+    </div>
+  </div>
+</div>
+<div style="border-top:1px solid #e0ddd7;margin:18px 0 12px;padding-top:12px;font-size:12px;color:#5f5e5a;line-height:1.6">
+  <strong style="color:#2c2c2a">Now flip the rule.</strong> Instead of one knight moving through its own trail, <strong>two armies</strong> place pieces — each picks the lowest square the other army can't reach. No piece ever gets trapped. Yet after millions of placements, the board mysteriously splits into large territories nobody planned…
+</div>
 <div class="eli8-card">
   <div class="eli8-board-col">
     <div id="eli8Brd"></div>
@@ -523,18 +612,21 @@ function showEli(level){
     </div>
   </div>
   <div class="eli8-info-col">
-    <div class="eli8-stephead">Step by step</div>
+    <div class="eli8-stephead">Two-army placement</div>
     <div class="eli8-desc" id="eli8Desc"></div>
     <div class="eli8-legend" style="margin-top:10px;flex-direction:column;gap:5px">
       <span class="eli8-key"><span class="eli8-dot" style="background:#E24B4A"></span>Red placed</span>
       <span class="eli8-key"><span class="eli8-dot" style="background:#2C2C2A"></span>Black placed</span>
-      <span class="eli8-key"><span class="eli8-dot" style="background:#2C2C2A;outline:2px solid #E8A000;outline-offset:-2px"></span>Enemy causing block (amber ring)</span>
-      <span class="eli8-key"><span class="eli8-dot" id="eli8LegTried"></span>Tried this turn — blocked</span>
-      <span class="eli8-key"><span class="eli8-dot" id="eli8LegOther"></span>Also in enemy's reach</span>
+      <span class="eli8-key"><span class="eli8-dot" style="background:#2C2C2A;outline:2px solid #E8A000;outline-offset:-2px"></span>Enemy blocking (amber ring)</span>
+      <span class="eli8-key"><span class="eli8-dot" id="eli8LegTried"></span>Tried — blocked</span>
+      <span class="eli8-key"><span class="eli8-dot" id="eli8LegOther"></span>In enemy's reach</span>
       <span class="eli8-key"><span class="eli8-dot" style="background:#E24B4A;outline:2px solid #5a9e4a;outline-offset:-2px"></span>Just placed (green ring)</span>
     </div>
   </div>
 </div>`;
+    updateEli8Tk();
+    document.getElementById('eli8TkPrv').addEventListener('click',()=>{if(eli8TkStep>0){eli8TkStep--;updateEli8Tk();}});
+    document.getElementById('eli8TkNxt').addEventListener('click',()=>{if(eli8TkStep<eli8TkData.steps.length-1){eli8TkStep++;updateEli8Tk();}});
     updateEli8();
     document.getElementById('eli8Prv').addEventListener('click',()=>{if(eli8Step>0){eli8Step--;updateEli8();}});
     document.getElementById('eli8Nxt').addEventListener('click',()=>{if(eli8Step<eli8Data.steps.length-1){eli8Step++;updateEli8();}});
