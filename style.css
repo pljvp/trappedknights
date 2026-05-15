@@ -180,7 +180,8 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;
   #app{padding:12px}
   .controls{flex-direction:column;gap:6px;margin-bottom:8px}
   .ctrl{flex-direction:column;gap:3px;width:100%}
-  .ctrl select{width:100%;min-width:0;height:38px}
+  .ctrl select{width:100%;min-width:0}
+  #sizeSelect,#shapeSelect{flex:none;height:34px}
   .ctrl-row{width:100%}
   .ctrl-row select{flex:1;min-width:0}
   #runBtn{height:42px;font-size:14px}
